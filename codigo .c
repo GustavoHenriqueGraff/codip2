@@ -2,79 +2,73 @@
 #include <stdlib.h>
 #include <time.h>
 
-// ========================
-// DEFINIÇÕES E CONSTANTES
-// ========================
-#define TAMANHO 1000      // Tamanho do vetor (lista encadeada)
-#define LIMITE 9999       // Valor máximo para os elementos
-#define CRESCENTE 1       // Ordenação crescente
-#define DECRESCENTE 0     // Ordenação decrescente
+#define TAMANHO 1000
+#define LIMITE 9999
+#define CRESCENTE 1
+#define DECRESCENTE 0
 
-// ========================
-// DEFINIÇÃO DA ESTRUTURA
-// ========================
-typedef struct vetor {
-    int elemento;
-    struct vetor *prox;
-} Vetor;
+typedef struct No {
+    int valor;
+    struct No *prox;
+} No;
 
-// ====================================
-// FUNÇÕES DE MANIPULAÇÃO DA LISTA
-// ====================================
-
-// Inicializa a lista
-Vetor *inicializarVetor() {
+No *criarLista() {
     return NULL;
 }
 
-// Insere novo elemento no início da lista
-Vetor *inserirElemento(Vetor *vetor, int info) {
-    Vetor *novo = malloc(sizeof(Vetor));
-    novo->elemento = info;
-    novo->prox = vetor;
+No *inserirNoInicio(No *lista, int valor) {
+    No *novo = malloc(sizeof(No));
+    if (!novo) {
+        fprintf(stderr, "Erro de alocação de memória\n");
+        exit(EXIT_FAILURE);
+    }
+    novo->valor = valor;
+    novo->prox = lista;
     return novo;
 }
 
-// Preenche a lista com valores aleatórios
-void preenchedorDeVetor(Vetor **vetor) {
+void preencherLista(No **lista) {
     for (int i = 0; i < TAMANHO; i++) {
-        *vetor = inserirElemento(*vetor, rand() % (LIMITE + 1));
+        *lista = inserirNoInicio(*lista, rand() % (LIMITE + 1));
     }
 }
 
-// Lê e imprime os 20 primeiros e 20 últimos elementos da lista
-void leitorDeVetor(Vetor *vetor) {
-    Vetor *aux = vetor;
+// Imprime 20 primeiros e 20 últimos elementos da lista
+void imprimirLista(No *lista) {
+    No *atual = lista;
     int i = 0;
 
-    printf("Primeiros 20 elementos: ");
-    while (aux != NULL && i < 20) {
-        printf("%d ", aux->elemento);
-        aux = aux->prox;
+    printf("Primeiros 20: ");
+    while (atual != NULL && i < 20) {
+        printf("%d ", atual->valor);
+        atual = atual->prox;
         i++;
     }
     printf("\n");
 
-    while (aux != NULL && i < TAMANHO - 20) {
-        aux = aux->prox;
+    while (atual != NULL && i < TAMANHO - 20) {
+        atual = atual->prox;
         i++;
     }
 
-    printf("Últimos 20 elementos: ");
-    while (aux != NULL && i < TAMANHO) {
-        printf("%d ", aux->elemento);
-        aux = aux->prox;
+    printf("Últimos 20: ");
+    while (atual != NULL && i < TAMANHO) {
+        printf("%d ", atual->valor);
+        atual = atual->prox;
         i++;
     }
     printf("\n");
 }
 
-// Cria uma cópia da lista original
-void copiarVetor(Vetor *original, Vetor **copia) {
-    Vetor *novo = NULL, *ultimo = NULL;
+void copiarLista(No *original, No **copia) {
+    No *novo = NULL, *ultimo = NULL;
     while (original != NULL) {
-        novo = malloc(sizeof(Vetor));
-        novo->elemento = original->elemento;
+        novo = malloc(sizeof(No));
+        if (!novo) {
+            fprintf(stderr, "Erro de alocação de memória\n");
+            exit(EXIT_FAILURE);
+        }
+        novo->valor = original->valor;
         novo->prox = NULL;
 
         if (ultimo != NULL)
@@ -87,39 +81,36 @@ void copiarVetor(Vetor *original, Vetor **copia) {
     }
 }
 
-// Libera a memória da lista
-void freeVetor(Vetor *vetor) {
-    Vetor *temp;
-    while (vetor != NULL) {
-        temp = vetor;
-        vetor = vetor->prox;
+void liberarLista(No *lista) {
+    No *temp;
+    while (lista != NULL) {
+        temp = lista;
+        lista = lista->prox;
         free(temp);
     }
 }
 
-// Troca os valores de dois nós
-void trocar(Vetor *a, Vetor *b) {
-    int temp = a->elemento;
-    a->elemento = b->elemento;
-    b->elemento = temp;
+void trocarValores(No *a, No *b) {
+    int temp = a->valor;
+    a->valor = b->valor;
+    b->valor = temp;
 }
 
-// ========================
-// BUBBLE SORT
-// ========================
-void bubbleSort(Vetor *inicio, int crescente) {
+void bubbleSort(No *inicio, int crescente) {
     int trocou;
-    Vetor *aux;
-    Vetor *fim = NULL;
+    No *aux;
+    No *fim = NULL;
+
+    if (inicio == NULL) return;
 
     do {
         trocou = 0;
         aux = inicio;
 
         while (aux->prox != fim) {
-            if ((crescente && aux->elemento > aux->prox->elemento) ||
-                (!crescente && aux->elemento < aux->prox->elemento)) {
-                trocar(aux, aux->prox);
+            if ((crescente && aux->valor > aux->prox->valor) ||
+                (!crescente && aux->valor < aux->prox->valor)) {
+                trocarValores(aux, aux->prox);
                 trocou = 1;
             }
             aux = aux->prox;
@@ -128,17 +119,12 @@ void bubbleSort(Vetor *inicio, int crescente) {
     } while (trocou);
 }
 
-// ========================
-// QUICK SORT
-// ========================
-
-// Particiona a lista em menores e maiores que o pivô
-void particionar(Vetor *inicio, Vetor **menores, Vetor **maiores, int pivo, int crescente) {
-    Vetor *atual = inicio, *proximo;
+void particionar(No *inicio, No **menores, No **maiores, int pivo, int crescente) {
+    No *atual = inicio, *proximo;
 
     while (atual != NULL) {
         proximo = atual->prox;
-        if ((crescente && atual->elemento < pivo) || (!crescente && atual->elemento > pivo)) {
+        if ((crescente && atual->valor < pivo) || (!crescente && atual->valor > pivo)) {
             atual->prox = *menores;
             *menores = atual;
         } else {
@@ -149,22 +135,20 @@ void particionar(Vetor *inicio, Vetor **menores, Vetor **maiores, int pivo, int 
     }
 }
 
-// Função principal do QuickSort
-void quickSort(Vetor **inicio, int crescente) {
+void quickSort(No **inicio, int crescente) {
     if (*inicio == NULL || (*inicio)->prox == NULL)
         return;
 
-    Vetor *menores = NULL, *maiores = NULL;
-    Vetor *pivo = *inicio;
-    Vetor *resto = pivo->prox;
+    No *menores = NULL, *maiores = NULL, *pivo = *inicio;
+    No *resto = pivo->prox;
     pivo->prox = NULL;
 
-    particionar(resto, &menores, &maiores, pivo->elemento, crescente);
+    particionar(resto, &menores, &maiores, pivo->valor, crescente);
 
     quickSort(&menores, crescente);
     quickSort(&maiores, crescente);
 
-    Vetor *fimMenores = menores;
+    No *fimMenores = menores;
     if (fimMenores != NULL) {
         while (fimMenores->prox != NULL)
             fimMenores = fimMenores->prox;
@@ -177,57 +161,53 @@ void quickSort(Vetor **inicio, int crescente) {
     *inicio = menores;
 }
 
-// ========================
-// FUNÇÃO PRINCIPAL
-// ========================
+
 int main() {
-    srand(time(NULL)); // Semente aleatória
+    srand(time(NULL));
 
-    // Criação e preenchimento da lista original
-    Vetor *vetorOriginal = inicializarVetor();
-    preenchedorDeVetor(&vetorOriginal);
+    No *listaOriginal = criarLista();
+    preencherLista(&listaOriginal);
 
-    // Cópias para ordenações
-    Vetor *v1 = inicializarVetor(), *v2 = inicializarVetor();
-    Vetor *v3 = inicializarVetor(), *v4 = inicializarVetor();
-    copiarVetor(vetorOriginal, &v1);
-    copiarVetor(vetorOriginal, &v2);
-    copiarVetor(vetorOriginal, &v3);
-    copiarVetor(vetorOriginal, &v4);
+    No *listaBubbleCresc = criarLista();
+    No *listaBubbleDecresc = criarLista();
+    No *listaQuickCresc = criarLista();
+    No *listaQuickDecresc = criarLista();
 
-    // Imprime vetor original
-    printf("=== VETOR ORIGINAL ===\n");
-    leitorDeVetor(vetorOriginal);
-    printf("\n\n");
-    freeVetor(vetorOriginal);
+    copiarLista(listaOriginal, &listaBubbleCresc);
+    copiarLista(listaOriginal, &listaBubbleDecresc);
+    copiarLista(listaOriginal, &listaQuickCresc);
+    copiarLista(listaOriginal, &listaQuickDecresc);
 
-    // Bubble Sort Crescente
-    bubbleSort(v1, CRESCENTE);
-    printf("=== BUBBLE SORT - CRESCENTE ===\n");
-    leitorDeVetor(v1);
-    printf("\n\n");
-    freeVetor(v1);
+    printf("=== LISTA ORIGINAL ===\n");
+    imprimirLista(listaOriginal);
+    printf("\n");
 
-    // Bubble Sort Decrescente
-    bubbleSort(v2, DECRESCENTE);
-    printf("=== BUBBLE SORT - DECRESCENTE ===\n");
-    leitorDeVetor(v2);
-    printf("\n\n");
-    freeVetor(v2);
+    bubbleSort(listaBubbleCresc, CRESCENTE);
+    printf("=== BUBBLE SORT CRESCENTE ===\n");
+    imprimirLista(listaBubbleCresc);
+    printf("\n");
 
-    // Quick Sort Crescente
-    quickSort(&v3, CRESCENTE);
-    printf("=== QUICK SORT - CRESCENTE ===\n");
-    leitorDeVetor(v3);
-    printf("\n\n");
-    freeVetor(v3);
+    bubbleSort(listaBubbleDecresc, DECRESCENTE);
+    printf("=== BUBBLE SORT DECRESCENTE ===\n");
+    imprimirLista(listaBubbleDecresc);
+    printf("\n");
 
-    // Quick Sort Decrescente
-    quickSort(&v4, DECRESCENTE);
-    printf("=== QUICK SORT - DECRESCENTE ===\n");
-    leitorDeVetor(v4);
-    printf("\n\n");
-    freeVetor(v4);
+    quickSort(&listaQuickCresc, CRESCENTE);
+    printf("=== QUICK SORT CRESCENTE ===\n");
+    imprimirLista(listaQuickCresc);
+    printf("\n");
+
+    quickSort(&listaQuickDecresc, DECRESCENTE);
+    printf("=== QUICK SORT DECRESCENTE ===\n");
+    imprimirLista(listaQuickDecresc);
+    printf("\n");
+
+  
+    liberarLista(listaOriginal);
+    liberarLista(listaBubbleCresc);
+    liberarLista(listaBubbleDecresc);
+    liberarLista(listaQuickCresc);
+    liberarLista(listaQuickDecresc);
 
     return 0;
 }

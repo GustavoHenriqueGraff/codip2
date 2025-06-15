@@ -1,26 +1,31 @@
 #include <stdlib.h>
-#include "vetor.h"
+#include "lista.h"         
 #include "bubble_sort.h"
 #include "constantes.h"
 
-// Implementação do Bubble Sort para listas encadeadas
-void bubbleSort(Vetor *inicio, int crescente) {
-    int trocou;
-    Vetor *aux;
-    Vetor *fim = NULL;
+void bubbleSort(Item *inicio, int crescente) {
+    int houveTroca;
+    Item *atual;
+    Item *limite = NULL;
 
     do {
-        trocou = 0;
-        aux = inicio;
+        houveTroca = 0;
+        atual = inicio;
 
-        while (aux->prox != fim) {
-            if ((crescente && aux->elemento > aux->prox->elemento) ||
-                (!crescente && aux->elemento < aux->prox->elemento)) {
-                trocar(aux, aux->prox);
-                trocou = 1;
+        while (atual->prox != limite) {
+            int precisaTrocar = (crescente && atual->dado > atual->prox->dado) ||
+                                (!crescente && atual->dado < atual->prox->dado);
+
+            if (precisaTrocar) {
+                trocarDados(atual, atual->prox);
+                houveTroca = 1;
             }
-            aux = aux->prox;
+
+            atual = atual->prox;
         }
-        fim = aux;
-    } while (trocou);
+
+        limite = atual; // Após cada passada, o maior (ou menor) está no final
+    } while (houveTroca);
 }
+
+     

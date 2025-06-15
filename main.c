@@ -1,59 +1,59 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "constantes.h"
-#include "vetor.h"
-#include "bubble_sort.h"
-#include "quick_sort.h"
+#include "lista.h"          
+#include "ordenacao.h"     
 
 int main() {
-    srand(time(NULL)); // Inicializa semente aleatória
+    srand(time(NULL)); 
 
-    // Criação e preenchimento do vetor original
-    Vetor *vetorOriginal = inicializarVetor();
-    preenchedorDeVetor(&vetorOriginal);
+   
+    No *original = criarLista();
+    preencherLista(&original);
 
-    // Cópias para diferentes algoritmos
-    Vetor *v1 = inicializarVetor(), *v2 = inicializarVetor();
-    Vetor *v3 = inicializarVetor(), *v4 = inicializarVetor();
+    // Cópias para teste de ordenações
+    No *bubCresc = criarLista();
+    No *bubDecr  = criarLista();
+    No *qkCresc  = criarLista();
+    No *qkDecr   = criarLista();
 
-    copiarVetor(vetorOriginal, &v1);
-    copiarVetor(vetorOriginal, &v2);
-    copiarVetor(vetorOriginal, &v3);
-    copiarVetor(vetorOriginal, &v4);
+    copiarLista(original, &bubCresc);
+    copiarLista(original, &bubDecr);
+    copiarLista(original, &qkCresc);
+    copiarLista(original, &qkDecr);
 
-    printf("=== VETOR ORIGINAL ===\n");
-    leitorDeVetor(vetorOriginal);
+    printf("=== LISTA ORIGINAL ===\n");
+    imprimirLista(original);
     printf("\n\n");
-    freeVetor(vetorOriginal);
+    liberarLista(original);
 
-    // Bubble Sort Crescente
-    bubbleSort(v1, CRESCENTE);
+   
+    bubbleSort(bubCresc, CRESCENTE);
     printf("=== BUBBLE SORT - CRESCENTE ===\n");
-    leitorDeVetor(v1);
+    imprimirLista(bubCresc);
     printf("\n\n");
-    freeVetor(v1);
+    liberarLista(bubCresc);
 
-    // Bubble Sort Decrescente
-    bubbleSort(v2, DECRESCENTE);
+   
+    bubbleSort(bubDecr, DECRESCENTE);
     printf("=== BUBBLE SORT - DECRESCENTE ===\n");
-    leitorDeVetor(v2);
+    imprimirLista(bubDecr);
     printf("\n\n");
-    freeVetor(v2);
+    liberarLista(bubDecr);
 
-    // QuickSort Crescente
-    quickSort(&v3, CRESCENTE);
+    
+    quickSort(&qkCresc, CRESCENTE);
     printf("=== QUICK SORT - CRESCENTE ===\n");
-    leitorDeVetor(v3);
+    imprimirLista(qkCresc);
     printf("\n\n");
-    freeVetor(v3);
+    liberarLista(qkCresc);
 
-    // QuickSort Decrescente
-    quickSort(&v4, DECRESCENTE);
+  
+    quickSort(&qkDecr, DECRESCENTE);
     printf("=== QUICK SORT - DECRESCENTE ===\n");
-    leitorDeVetor(v4);
+    imprimirLista(qkDecr);
     printf("\n\n");
-    freeVetor(v4);
+    liberarLista(qkDecr);
 
     return 0;
 }

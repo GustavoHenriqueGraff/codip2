@@ -1,42 +1,42 @@
 #include <stdlib.h>
-#include "vetor.h"
-#include "quick_sort.h"
+#include "lista.h"         // Estrutura No e funções auxiliares
+#include "ordenacao.h"     // Declarações de quickSort()
 
-// Função auxiliar para particionar a lista
-Vetor *particionar(Vetor *inicio, Vetor **menores, Vetor **maiores, int pivo, int crescente) {
-    Vetor *atual = inicio, *proximo;
 
+void particionar(No *inicio, No **menores, No **maiores, int pivo, int crescente) {
+    No *atual = inicio;
     while (atual != NULL) {
-        proximo = atual->prox;
-        if ((crescente && atual->elemento < pivo) || (!crescente && atual->elemento > pivo)) {
+        No *proximo = atual->prox;
+
+        if ((crescente && atual->valor < pivo) ||
+            (!crescente && atual->valor > pivo)) {
             atual->prox = *menores;
             *menores = atual;
         } else {
             atual->prox = *maiores;
             *maiores = atual;
         }
+
         atual = proximo;
     }
-
-    return *menores;
 }
 
-// Função principal do QuickSort
-void quickSort(Vetor **inicio, int crescente) {
+
+void quickSort(No **inicio, int crescente) {
     if (*inicio == NULL || (*inicio)->prox == NULL)
         return;
 
-    Vetor *menores = NULL, *maiores = NULL, *pivo = *inicio;
-    Vetor *resto = pivo->prox;
+    No *menores = NULL, *maiores = NULL;
+    No *pivo = *inicio;
+    No *resto = pivo->prox;
     pivo->prox = NULL;
 
-    particionar(resto, &menores, &maiores, pivo->elemento, crescente);
+    particionar(resto, &menores, &maiores, pivo->valor, crescente);
 
     quickSort(&menores, crescente);
     quickSort(&maiores, crescente);
 
-    // Junta menores + pivo + maiores
-    Vetor *fimMenores = menores;
+    No *fimMenores = menores;
     if (fimMenores != NULL) {
         while (fimMenores->prox != NULL)
             fimMenores = fimMenores->prox;

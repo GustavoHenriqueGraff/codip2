@@ -1,61 +1,57 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "vetor.h"
+#include "lista.h"
 #include "constantes.h"
 
-// Inicializa o ponteiro do vetor (lista encadeada)
-Vetor *inicializarVetor() {
+
+No *criarLista() {
     return NULL;
 }
 
-// Insere um novo elemento no início da lista
-Vetor *inserirElemento(Vetor *vetor, int info) {
-    Vetor *novo = malloc(sizeof(Vetor));
-    novo->elemento = info;
-    novo->prox = vetor;
+No *inserirNoInicio(No *lista, int valor) {
+    No *novo = malloc(sizeof(No));
+    novo->valor = valor;
+    novo->prox = lista;
     return novo;
 }
 
-// Preenche a lista com valores aleatórios
-void preenchedorDeVetor(Vetor **vetor) {
+void preencherLista(No **lista) {
     for (int i = 0; i < TAMANHO; i++) {
-        *vetor = inserirElemento(*vetor, rand() % (LIMITE + 1));
+        *lista = inserirNoInicio(*lista, rand() % (LIMITE + 1));
     }
 }
 
-// Imprime os 20 primeiros e os 20 últimos elementos
-void leitorDeVetor(Vetor *vetor) {
-    Vetor *aux = vetor;
+void imprimirLista(No *lista) {
+    No *atual = lista;
     int i = 0;
 
-    printf("Primeiros 20 elementos: ");
-    while (aux != NULL && i < 20) {
-        printf("%d ", aux->elemento);
-        aux = aux->prox;
+    printf("Primeiros 20: ");
+    while (atual != NULL && i < 20) {
+        printf("%d ", atual->valor);
+        atual = atual->prox;
         i++;
     }
     printf("\n");
 
-    while (aux != NULL && i < TAMANHO - 20) {
-        aux = aux->prox;
+    while (atual != NULL && i < TAMANHO - 20) {
+        atual = atual->prox;
         i++;
     }
 
-    printf("Últimos 20 elementos: ");
-    while (aux != NULL && i < TAMANHO) {
-        printf("%d ", aux->elemento);
-        aux = aux->prox;
+    printf("Últimos 20: ");
+    while (atual != NULL && i < TAMANHO) {
+        printf("%d ", atual->valor);
+        atual = atual->prox;
         i++;
     }
     printf("\n");
 }
 
-// Cria uma cópia da lista original
-void copiarVetor(Vetor *original, Vetor **copia) {
-    Vetor *novo = NULL, *ultimo = NULL;
+void copiarLista(No *original, No **copia) {
+    No *novo = NULL, *ultimo = NULL;
     while (original != NULL) {
-        novo = malloc(sizeof(Vetor));
-        novo->elemento = original->elemento;
+        novo = malloc(sizeof(No));
+        novo->valor = original->valor;
         novo->prox = NULL;
 
         if (ultimo != NULL)
@@ -68,19 +64,18 @@ void copiarVetor(Vetor *original, Vetor **copia) {
     }
 }
 
-// Libera a memória da lista
-void freeVetor(Vetor *vetor) {
-    Vetor *temp;
-    while (vetor != NULL) {
-        temp = vetor;
-        vetor = vetor->prox;
+void liberarLista(No *lista) {
+    No *temp;
+    while (lista != NULL) {
+        temp = lista;
+        lista = lista->prox;
         free(temp);
     }
 }
 
-// Troca os valores de dois nós
-void trocar(Vetor *a, Vetor *b) {
-    int temp = a->elemento;
-    a->elemento = b->elemento;
-    b->elemento = temp;
+void trocarValores(No *a, No *b) {
+    int temp = a->valor;
+    a->valor = b->valor;
+    b->valor = temp;
 }
+
